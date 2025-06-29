@@ -16,4 +16,6 @@ public interface LoginDao {
      * @return 사용자 정보 (없으면 null)
      */
     User findByEmail(String email);
+    // 사용자 ID로 조회하는 메소드 추가
+    User findById(Long userId);
 } 
