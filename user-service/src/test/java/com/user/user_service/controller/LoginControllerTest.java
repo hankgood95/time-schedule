@@ -5,6 +5,7 @@ import com.user.user_service.config.security.SecurityConfig;
 import com.user.user_service.model.dto.request.LoginRequest;
 import com.user.user_service.model.dto.response.JwtResponse;
 import com.user.user_service.service.LoginService;
+import com.user.user_service.util.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,9 @@ class LoginControllerTest {
 
     @MockBean
     private LoginService loginService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
 
     private LoginRequest validLoginRequest;
     private LoginRequest invalidLoginRequest;

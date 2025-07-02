@@ -12,7 +12,7 @@
     </select>
     
     <!-- 새로운 사용자 저장 -->
-    <insert id="save" parameterType="User">
+    <insert id="save" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO users (
             email,
             password_hash,

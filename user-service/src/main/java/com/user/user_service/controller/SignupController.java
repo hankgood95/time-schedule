@@ -3,6 +3,7 @@ package com.user.user_service.controller;
 import com.user.user_service.config.swagger.SignupApiResponses;
 import com.user.user_service.model.dto.request.SignUpRequest;
 import com.user.user_service.model.dto.response.ApiResponse;
+import com.user.user_service.model.dto.response.SignupResponse;
 import com.user.user_service.service.SignupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
  * 회원가입 관련 API를 처리하는 컨트롤러
  * 
  * 주요 기능:
- * - 회원가입
- * - (향후 추가될 기능들: 로그인, 사용자 정보 조회, 수정, 삭제 등)
+ * - 회원가입: 새로운 사용자 등록 및 JWT 토큰 발급
+ * - (향후 추가될 기능들: 사용자 정보 조회, 수정, 삭제 등)
  */
 @RestController
 @RequestMapping("/time-schedule")
@@ -35,20 +36,22 @@ public class SignupController {
      * 회원가입 API
      * 
      * @param request 회원가입 요청 정보 (이메일, 비밀번호, 이름)
-     * @return 회원가입 성공 시 201 Created 응답
-     * 
-     * API 설명:
-     * - POST /api/v1/users/signup
-     * - 요청 본문: { "email": "user@example.com", "password": "password123!", "name": "홍길동" }
-     * - 성공 시: 201 Created
-     * - 실패 시: 400 Bad Request (검증 실패) 또는 409 Conflict (이메일 중복)
+     * @return 회원가입 성공 시 201 Created 응답 (토큰, 이름, 홈화면 이동 메시지 포함)
      */
     @PostMapping("/signup")
-    @Operation(summary = "회원가입", description = "새로운 사용자를 등록합니다.")
-    public ResponseEntity<ApiResponse<Void>> signUp(@Valid @RequestBody SignUpRequest request) {
-        signupService.signUp(request);
+    @Operation(
+        summary = "회원가입", 
+        description = "새로운 사용자를 등록하고 JWT 토큰을 발급합니다. " +
+                     "회원가입 성공 시 즉시 로그인 상태가 되어 홈화면으로 이동할 수 있습니다."
+    )
+    public ResponseEntity<ApiResponse<SignupResponse>> signUp(@Valid @RequestBody SignUpRequest request) {
+        // 1. SignupService를 통해 회원가입 처리 및 JWT 토큰 생성
+        SignupResponse signupResponse = signupService.signUp(request);
+        
+        // 2. HTTP 201 Created 상태로 성공 응답 반환
+        // 201 Created는 리소스 생성 성공을 의미하는 표준 HTTP 상태 코드
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("회원가입이 완료되었습니다.", null));
+                .body(ApiResponse.success("회원가입이 완료되었습니다.", signupResponse));
     }
 } 

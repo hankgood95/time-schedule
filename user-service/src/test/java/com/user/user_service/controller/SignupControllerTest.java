@@ -3,8 +3,10 @@ package com.user.user_service.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.user.user_service.exception.DuplicateEmailException;
 import com.user.user_service.model.dto.request.SignUpRequest;
+import com.user.user_service.model.dto.response.SignupResponse;
 import com.user.user_service.service.SignupService;
 import com.user.user_service.config.security.SecurityConfig;
+import com.user.user_service.util.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,6 +45,9 @@ class SignupControllerTest {
     @MockBean
     private SignupService signupService;
 
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
     @Test
     @DisplayName("정상적인 회원가입 요청")
     void signUp_Success() throws Exception {
@@ -51,14 +56,25 @@ class SignupControllerTest {
         request.setPassword("Password123!");
         request.setName("홍길동");
 
-        doNothing().when(signupService).signUp(any(SignUpRequest.class));
+        SignupResponse expectedResponse = new SignupResponse(
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "홍길동",
+            "회원가입이 완료되었습니다. 홈화면으로 이동합니다.",
+            1L
+        );
+
+        when(signupService.signUp(any(SignUpRequest.class))).thenReturn(expectedResponse);
 
         mockMvc.perform(post("/time-schedule/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."));
+                .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."))
+                .andExpect(jsonPath("$.data.token").value("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."))
+                .andExpect(jsonPath("$.data.name").value("홍길동"))
+                .andExpect(jsonPath("$.data.redirectMessage").value("회원가입이 완료되었습니다. 홈화면으로 이동합니다."))
+                .andExpect(jsonPath("$.data.userId").value(1L));
     }
 
     @Test
