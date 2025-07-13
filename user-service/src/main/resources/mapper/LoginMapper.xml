@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.user.user_service.model.dao.LoginDao">
+    
+    <!-- 이메일로 사용자 조회 -->
+    <select id="findByEmail" resultType="User">
+        SELECT 
+            user_id as userId,
+            email,
+            password_hash as passwordHash,
+            name,
+            is_admin as isAdmin,
+            status,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users 
+        WHERE email = #{email}
+    </select>
+
+    <select id="findById" parameterType="long" resultType="com.user.user_service.model.domain.User">
+        SELECT
+            user_id as userId,
+            email,
+            password_hash as passwordHash,
+            name,
+            is_admin as isAdmin,
+            status,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+    
+</mapper> 
