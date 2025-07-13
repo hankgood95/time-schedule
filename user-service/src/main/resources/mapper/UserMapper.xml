@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.user.user_service.model.dao.UserDao">
+
+    <!-- 사용자 정보 조회 결과 매핑 -->
+    <resultMap id="UserResultMap" type="User">
+        <id column="user_id" property="userId" />
+        <result column="email" property="email" />
+        <result column="password_hash" property="passwordHash" />
+        <result column="name" property="name" />
+        <result column="status" property="status" typeHandler="com.user.user_service.config.db.typehandler.UserStatusTypeHandler" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <!-- 이메일을 통해 사용자 정보 조회 -->
+    <select id="findByEmail" resultMap="UserResultMap">
+        SELECT 
+            user_id,
+            email,
+            password_hash,
+            name,
+            status,
+            created_at,
+            updated_at
+        FROM users 
+        WHERE email = #{email}
+    </select>
+
+    <!-- 사용자 ID를 통해 사용자 정보 조회 -->
+    <select id="findById" resultMap="UserResultMap">
+        SELECT 
+            user_id,
+            email,
+            password_hash,
+            name,
+            status,
+            created_at,
+            updated_at
+        FROM users 
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper> 

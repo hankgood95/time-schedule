@@ -87,10 +87,55 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("서버 오류가 발생했습니다."));
     }
 
+    /**
+     * 로그인 예외 처리
+     *
+     * @param e LoginException
+     * @return 401 UNAUTHORIZED, 로그인 실패 메시지 포함
+     */
     @ExceptionHandler(LoginException.class)
     public ResponseEntity<ApiResponse<String>> handleLoginException(LoginException e) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(e.getMessage()));
+    }
+
+    /**
+     * JWT 인증 예외 처리
+     *
+     * @param e JwtAuthenticationException
+     * @return 401 UNAUTHORIZED, JWT 인증 실패 메시지 포함
+     */
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleJwtAuthenticationException(JwtAuthenticationException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(e.getMessage()));
+    }
+
+    /**
+     * 유효하지 않은 토큰 예외 처리
+     *
+     * @param e InvalidTokenException
+     * @return 401 UNAUTHORIZED, 토큰 유효성 실패 메시지 포함
+     */
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidTokenException(InvalidTokenException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(e.getMessage()));
+    }
+
+    /**
+     * 사용자를 찾을 수 없는 예외 처리
+     *
+     * @param e UserNotFoundException
+     * @return 404 NOT FOUND, 사용자 없음 메시지 포함
+     */
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserNotFoundException(UserNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(e.getMessage()));
     }
 } 

@@ -1,10 +1,13 @@
 package com.user.user_service.config.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -13,7 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     
     /**
      * 비밀번호 암호화를 위한 PasswordEncoder 빈 등록
@@ -26,12 +32,15 @@ public class SecurityConfig {
 
     /**
      * SecurityFilterChain 설정
-     * 회원가입 엔드포인트는 인증 없이 접근 가능하도록 설정
+     * JWT 토큰 기반 인증을 사용하며, 회원가입과 로그인 엔드포인트는 인증 없이 접근 가능
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT는 Stateless
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/time-schedule/signup").permitAll()
                 .requestMatchers("/auth/login").permitAll()
@@ -58,6 +67,9 @@ public class SecurityConfig {
                 //
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/v3/api-docs").permitAll()
+                
+                // 사용자 정보 조회 API는 인증된 사용자만 접근 가능
+                .requestMatchers("/time-schedule/users/**").authenticated()
                 
                 .anyRequest().authenticated()
             );
