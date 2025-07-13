@@ -128,7 +128,7 @@ class LoginServiceImplIntegrationTest {
         assertEquals("integration@test.com", foundUser.getEmail());
         assertEquals("통합테스트사용자", foundUser.getName());
         assertEquals(UserStatus.ACTIVE, foundUser.getStatus());
-        assertTrue(passwordEncoder.matches("password123", foundUser.getPasswordHash()));
+        assertTrue(passwordEncoder.matches("password123!", foundUser.getPasswordHash()));
     }
 
     @Test

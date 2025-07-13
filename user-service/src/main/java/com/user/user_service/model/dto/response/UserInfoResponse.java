@@ -1,5 +1,4 @@
 package com.user.user_service.model.dto.response;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,4 +23,4 @@ public class UserInfoResponse {
     
     @Schema(description = "사용자 상태", example = "ACTIVE")
     private String status;
-} 
+}
