@@ -67,6 +67,11 @@ public class LoginServiceImpl implements LoginService {
             throw new LoginException("사용자를 찾을 수 없습니다.");
         }
 
-        return new UserInfoResponse(user);
+        return UserInfoResponse.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .status(user.getStatus().toString())
+                .build();
     }
 }

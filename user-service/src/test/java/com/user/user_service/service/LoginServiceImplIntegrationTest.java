@@ -55,13 +55,13 @@ class LoginServiceImplIntegrationTest {
         // 회원가입 요청 데이터
         signUpRequest = new SignUpRequest();
         signUpRequest.setEmail("integration@test.com");
-        signUpRequest.setPassword("password123");
+        signUpRequest.setPassword("password123!");
         signUpRequest.setName("통합테스트사용자");
 
         // 로그인 요청 데이터
         loginRequest = new LoginRequest();
         loginRequest.setEmail("integration@test.com");
-        loginRequest.setPassword("password123");
+        loginRequest.setPassword("password123!");
     }
 
     @Test
